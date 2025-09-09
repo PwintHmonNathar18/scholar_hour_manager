@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   GPA: Number,
   maxHoursPerWeek: Number,
   department: String,
+  workedHours: { type: Number, default: 0 },
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

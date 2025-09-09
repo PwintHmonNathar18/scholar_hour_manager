@@ -10,7 +10,8 @@ export default function ProfilePage() {
     department: "",
     program: "",
     GPA: "",
-    maxHoursPerWeek: "",
+    workedHours: 0,
+    approvedSessions: 0,
   });
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
@@ -27,7 +28,8 @@ export default function ProfilePage() {
             department: data.department || "",
             program: data.program || "",
             GPA: data.GPA || "",
-            maxHoursPerWeek: data.maxHoursPerWeek || "",
+            workedHours: data.workedHours || 0,
+            approvedSessions: data.approvedSessions || 0,
           });
         });
     }
@@ -78,8 +80,12 @@ export default function ProfilePage() {
           <input type="number" step="0.01" value={form.GPA} onChange={handleChange("GPA")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
         </div>
         <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Max Hours Per Week</label>
-          <input type="number" value={form.maxHoursPerWeek} onChange={handleChange("maxHoursPerWeek")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
+          <label className="block text-sm mb-1 text-gray-700 font-medium">Worked Hours</label>
+          <input type="text" value={(form.workedHours / 60).toFixed(2)} disabled className="border p-2 rounded w-full text-gray-900" />
+        </div>
+        <div>
+          <label className="block text-sm mb-1 text-gray-700 font-medium">Approved Sessions</label>
+          <input type="number" value={form.approvedSessions || 0} disabled className="border p-2 rounded w-full text-gray-900" />
         </div>
         {message && <div className="text-green-600 text-sm">{message}</div>}
         <div className="flex gap-2 mt-4">

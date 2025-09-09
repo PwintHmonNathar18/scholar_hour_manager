@@ -11,6 +11,9 @@ export default function Sidebar() {
         <Link href="/" className="hover:underline">Main Page</Link>
         <Link href="/profile" className="hover:underline">Profile</Link>
         <Link href="/browse" className="hover:underline">Browse Shifts</Link>
+        {(session?.user.role === "supervisor" || session?.user.role === "admin") && (
+          <Link href="/approve-sessions" className="hover:underline">Approve Sessions</Link>
+        )}
         {/* Add more links as needed */}
       </nav>
       {session && (

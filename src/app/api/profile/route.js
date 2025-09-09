@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
+import SessionLog from "@/models/SessionLog";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
@@ -15,7 +16,11 @@ export async function GET(req) {
     department: user.department,
     program: user.program,
     GPA: user.GPA,
-    maxHoursPerWeek: user.maxHoursPerWeek,
+    workedHours: await SessionLog.aggregate([
+      { $match: { userEmail: user.email, approved: true } },
+      { $group: { _id: null, total: { $sum: "$minutes" } } }
+    ]).then(r => r[0]?.total || 0),
+    approvedSessions: await SessionLog.countDocuments({ userEmail: user.email, approved: true }),
   });
 }
 

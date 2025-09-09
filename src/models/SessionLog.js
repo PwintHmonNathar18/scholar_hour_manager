@@ -6,7 +6,7 @@ const SessionLogSchema = new mongoose.Schema({
   startAt: { type: Date, required: true },
   endAt:   { type: Date, required: true },
   minutes: { type: Number, required: true },
-  approved:{ type: Boolean, default: false },
+  approved: { type: Boolean, default: false },
 },{ timestamps:true });
 
 // 👇 explicit, unique collection name

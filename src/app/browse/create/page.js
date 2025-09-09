@@ -9,8 +9,10 @@ export default function CreateShiftPage() {
   const [form, setForm] = useState({
     title: "",
     department: "",
-    start: "",
-    end: "",
+    startDate: "",
+    startTime: "08:00",
+    endDate: "",
+    endTime: "17:00",
     maxSlots: 1,
     description: "",
   });
@@ -27,14 +29,17 @@ export default function CreateShiftPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (!form.title || !form.department || !form.start || !form.end || !form.maxSlots) {
+    if (!form.title || !form.department || !form.startDate || !form.startTime || !form.endDate || !form.endTime || !form.maxSlots) {
       setError("Please fill all required fields.");
       return;
     }
+    // Combine date and time into ISO strings
+    const start = form.startDate + "T" + form.startTime;
+    const end = form.endDate + "T" + form.endTime;
     const res = await fetch("/api/shifts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form }),
+      body: JSON.stringify({ ...form, start, end }),
     });
     if (res.ok) {
       setSuccess("Shift created!");
@@ -58,12 +63,28 @@ export default function CreateShiftPage() {
           <input type="text" value={form.department} onChange={onChange("department")} className="border p-2 rounded w-full" required />
         </div>
         <div>
+          <label className="block text-sm mb-1 font-medium">Start Date</label>
+          <input type="date" value={form.startDate} onChange={onChange("startDate")} className="border p-2 rounded w-full" required />
+        </div>
+        <div>
           <label className="block text-sm mb-1 font-medium">Start Time</label>
-          <input type="datetime-local" value={form.start} onChange={onChange("start")} className="border p-2 rounded w-full" required />
+          <select value={form.startTime} onChange={onChange("startTime")} className="border p-2 rounded w-full" required>
+            {Array.from({ length: 24 }, (_, h) => ["00", "15", "30", "45"].map((m) => `${h.toString().padStart(2, "0")}:${m}`)).flat().map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm mb-1 font-medium">End Date</label>
+          <input type="date" value={form.endDate} onChange={onChange("endDate")} className="border p-2 rounded w-full" required />
         </div>
         <div>
           <label className="block text-sm mb-1 font-medium">End Time</label>
-          <input type="datetime-local" value={form.end} onChange={onChange("end")} className="border p-2 rounded w-full" required />
+          <select value={form.endTime} onChange={onChange("endTime")} className="border p-2 rounded w-full" required>
+            {Array.from({ length: 24 }, (_, h) => ["00", "15", "30", "45"].map((m) => `${h.toString().padStart(2, "0")}:${m}`)).flat().map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-sm mb-1 font-medium">Max Slots</label>
