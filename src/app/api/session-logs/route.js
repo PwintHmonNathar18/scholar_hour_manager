@@ -1,8 +1,11 @@
+
 import dbConnect from "@/lib/db";
 import SessionLog from "@/models/SessionLog";
+import mongoose from "mongoose";
 
 export async function GET(req) {
   await dbConnect();
+  console.log("[Mongo] host:", mongoose.connection.host, "db:", mongoose.connection.name);
   const { searchParams } = new URL(req.url);
   const email = searchParams.get("email");
   const q = email ? { userEmail: email } : {};
