@@ -7,6 +7,7 @@ export default function ProfilePage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    department: "",
     program: "",
     GPA: "",
     maxHoursPerWeek: "",
@@ -23,6 +24,7 @@ export default function ProfilePage() {
           setForm({
             name: data.name || "",
             email: data.email || "",
+            department: data.department || "",
             program: data.program || "",
             GPA: data.GPA || "",
             maxHoursPerWeek: data.maxHoursPerWeek || "",
@@ -64,6 +66,10 @@ export default function ProfilePage() {
           <input type="text" value={form.name} onChange={handleChange("name")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
         </div>
         <div>
+          <label className="block text-sm mb-1 text-gray-700 font-medium">Department</label>
+          <input type="text" value={form.department} onChange={handleChange("department")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
+        </div>
+        <div>
           <label className="block text-sm mb-1 text-gray-700 font-medium">Program</label>
           <input type="text" value={form.program} onChange={handleChange("program")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
         </div>
@@ -82,14 +88,14 @@ export default function ProfilePage() {
               Edit
             </button>
           ) : (
-            <button type="submit" className="bg-black text-white rounded py-2 px-4">
-              Save
-            </button>
-          )}
-          {editing && (
-            <button type="button" className="bg-gray-300 rounded py-2 px-4 text-gray-900" onClick={() => setEditing(false)}>
-              Cancel
-            </button>
+            <>
+              <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={handleSave}>
+                Save
+              </button>
+              <button type="button" className="bg-gray-300 rounded py-2 px-4 text-gray-900" onClick={() => setEditing(false)}>
+                Cancel
+              </button>
+            </>
           )}
         </div>
       </form>

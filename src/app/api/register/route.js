@@ -16,6 +16,7 @@ export async function POST(req) {
     name: body.name,
     email: body.email,
     role: body.role,
+    department: body.department,
     // password: body.password, // Not stored for demo
   });
   return Response.json({ id: user._id, email: user.email, role: user.role });

@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
+  const [department, setDepartment] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
@@ -20,11 +21,11 @@ export default function RegisterPage() {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role }),
+      body: JSON.stringify({ name, email, password, role, department }),
     });
     if (res.ok) {
       setSuccess("Registration successful! You can now sign in.");
-      setName(""); setEmail(""); setPassword(""); setRole("student");
+      setName(""); setEmail(""); setPassword(""); setRole("student"); setDepartment("");
       setTimeout(() => router.push("/signin"), 1500);
     } else {
       const t = await res.text();
@@ -69,6 +70,14 @@ export default function RegisterPage() {
           <option value="supervisor">Supervisor</option>
           <option value="admin">Admin</option>
         </select>
+        <input
+          type="text"
+          placeholder="Department"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          className="border p-2 rounded w-full"
+          required
+        />
         {error && <div className="text-red-500 text-sm">{error}</div>}
         {success && <div className="text-green-600 text-sm">{success}</div>}
         <button className="bg-black text-white rounded py-2 w-full" type="submit">
