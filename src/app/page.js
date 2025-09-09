@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [form, setForm] = useState({
     userEmail: "",
     activity: "",
@@ -26,8 +30,13 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.replace("/signin");
+      return;
+    }
     load();
-  }, []);
+  }, [session, status]);
 
   const onChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -56,6 +65,8 @@ export default function Home() {
   };
 
   const fmt = (d) => (d ? new Date(d).toLocaleString() : "");
+
+  if (status === "loading" || !session) return null;
 
   return (
     <main className="mx-auto max-w-4xl p-6 space-y-6">
