@@ -1,11 +1,10 @@
-import dbConnect from "@/lib/db";
+import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { auth } from "@/auth.config";
 import User from "@/models/User";
 
 export async function GET(req) {
-  await dbConnect();
+  await connectDB();
   const { searchParams } = new URL(req.url);
   const department = searchParams.get("department");
   const q = department ? { department } : {};
@@ -18,9 +17,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  await dbConnect();
+  await connectDB();
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user || session.user.role !== "supervisor") {
       return new Response("Unauthorized: Not a supervisor", { status: 401 });
     }

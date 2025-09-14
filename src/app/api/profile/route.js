@@ -1,12 +1,11 @@
-import dbConnect from "@/lib/db";
+import connectDB from "@/lib/db";
 import User from "@/models/User";
 import SessionLog from "@/models/SessionLog";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { auth } from "@/auth.config";
 
 export async function GET(req) {
-  await dbConnect();
-  const session = await getServerSession(authOptions); // Only pass authOptions
+  await connectDB();
+  const session = await auth();
   if (!session?.user?.email) return new Response("Unauthorized", { status: 401 });
   const user = await User.findOne({ email: session.user.email });
   if (!user) return new Response("Not found", { status: 404 });
@@ -24,8 +23,8 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  await dbConnect();
-  const session = await getServerSession(authOptions); // Only pass authOptions
+  await connectDB();
+  const session = await auth();
   if (!session?.user?.email) return new Response("Unauthorized", { status: 401 });
   const body = await req.json();
   const user = await User.findOneAndUpdate(

@@ -1,9 +1,9 @@
-import dbConnect from "@/lib/db";
+import connectDB from "@/lib/db";
 import User from "@/models/User";
 import SessionLog from "@/models/SessionLog";
 
 export async function POST(req) {
-  await dbConnect();
+  await connectDB();
   const { logId, userEmail, minutes } = await req.json();
   // Mark session log as approved (add approved field if needed)
   await SessionLog.findByIdAndUpdate(logId, { approved: true });
