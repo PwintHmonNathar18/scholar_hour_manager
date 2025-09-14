@@ -15,7 +15,6 @@ export async function GET(req) {
     email: user.email,
     department: user.department,
     program: user.program,
-    GPA: user.GPA,
     workedHours: await SessionLog.aggregate([
       { $match: { userEmail: user.email, approved: true } },
       { $group: { _id: null, total: { $sum: "$minutes" } } }
@@ -35,7 +34,6 @@ export async function POST(req) {
       name: body.name,
       department: body.department,
       program: body.program,
-      GPA: body.GPA,
       maxHoursPerWeek: body.maxHoursPerWeek,
     },
     { new: true }

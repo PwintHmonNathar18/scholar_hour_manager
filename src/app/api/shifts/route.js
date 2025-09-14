@@ -20,7 +20,7 @@ export async function GET(req) {
 export async function POST(req) {
   await dbConnect();
   try {
-    const session = await getServerSession(req, authOptions);
+    const session = await getServerSession(authOptions);
     if (!session?.user || session.user.role !== "supervisor") {
       return new Response("Unauthorized: Not a supervisor", { status: 401 });
     }

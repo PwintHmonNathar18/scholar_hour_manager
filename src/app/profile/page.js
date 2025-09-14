@@ -9,7 +9,6 @@ export default function ProfilePage() {
     email: "",
     department: "",
     program: "",
-    GPA: "",
     workedHours: 0,
     approvedSessions: 0,
   });
@@ -27,7 +26,6 @@ export default function ProfilePage() {
             email: data.email || "",
             department: data.department || "",
             program: data.program || "",
-            GPA: data.GPA || "",
             workedHours: data.workedHours || 0,
             approvedSessions: data.approvedSessions || 0,
           });
@@ -74,10 +72,6 @@ export default function ProfilePage() {
         <div>
           <label className="block text-sm mb-1 text-gray-700 font-medium">Program</label>
           <input type="text" value={form.program} onChange={handleChange("program")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">GPA</label>
-          <input type="number" step="0.01" value={form.GPA} onChange={handleChange("GPA")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
         </div>
         <div>
           <label className="block text-sm mb-1 text-gray-700 font-medium">Worked Hours</label>
