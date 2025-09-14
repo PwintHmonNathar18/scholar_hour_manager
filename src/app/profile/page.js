@@ -82,22 +82,24 @@ export default function ProfilePage() {
           <input type="number" value={form.approvedSessions || 0} disabled className="border p-2 rounded w-full text-gray-900" />
         </div>
         {message && <div className="text-green-600 text-sm">{message}</div>}
-        <div className="flex gap-2 mt-4">
-          {!editing ? (
-            <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={() => setEditing(true)}>
-              Edit
-            </button>
-          ) : (
-            <>
-              <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={handleSave}>
-                Save
+        {session?.user?.role === "admin" && (
+          <div className="flex gap-2 mt-4">
+            {!editing ? (
+              <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={() => setEditing(true)}>
+                Edit
               </button>
-              <button type="button" className="bg-gray-300 rounded py-2 px-4 text-gray-900" onClick={() => setEditing(false)}>
-                Cancel
-              </button>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={handleSave}>
+                  Save
+                </button>
+                <button type="button" className="bg-gray-300 rounded py-2 px-4 text-gray-900" onClick={() => setEditing(false)}>
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </form>
     </main>
   );
