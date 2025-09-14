@@ -12,7 +12,7 @@ export default function ApproveSessionsPage() {
 
   useEffect(() => {
     if (!session || session.user.role !== "supervisor") return;
-    fetch("/api/session-logs")
+    fetch("/api/session-logs?pending=true")
       .then((res) => res.json())
       .then((data) => setLogs(data.items || []));
   }, [session]);
@@ -32,6 +32,21 @@ export default function ApproveSessionsPage() {
     }
   };
 
+  const disapproveLog = async (log) => {
+    setError(""); setSuccess("");
+    const res = await fetch(`/api/session-logs/disapprove`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ logId: log._id }),
+    });
+    if (res.ok) {
+      setSuccess("Session disapproved!");
+      setLogs((prev) => prev.filter((l) => l._id !== log._id));
+    } else {
+      setError("Failed to disapprove session.");
+    }
+  };
+
   if (!session || session.user.role !== "supervisor") {
     return <div className="p-6">Only supervisors can approve sessions.</div>;
   }
@@ -48,9 +63,20 @@ export default function ApproveSessionsPage() {
             <div><b>Start:</b> {new Date(log.startAt).toLocaleString()}</div>
             <div><b>End:</b> {new Date(log.endAt).toLocaleString()}</div>
             <div><b>Minutes:</b> {log.minutes}</div>
-            <button className="bg-black text-white rounded py-1 px-3 mt-2" onClick={() => approveLog(log)}>
-              Approve
-            </button>
+            <div className="flex gap-2 mt-3">
+              <button 
+                className="bg-green-600 text-white rounded py-2 px-4 hover:bg-green-700" 
+                onClick={() => approveLog(log)}
+              >
+                Approve
+              </button>
+              <button 
+                className="bg-red-600 text-white rounded py-2 px-4 hover:bg-red-700" 
+                onClick={() => disapproveLog(log)}
+              >
+                Disapprove
+              </button>
+            </div>
           </li>
         ))}
       </ul>

@@ -21,8 +21,8 @@ export default function SignInPage() {
     });
     if (res?.error) {
       setError("Invalid email or password");
-    } else {
-      router.push("/");
+    } else if (res?.ok) {
+      router.push("/dashboard");
     }
   };
 
