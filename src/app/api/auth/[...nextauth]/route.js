@@ -2,10 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
-// app/api/auth/[...nextauth]/route.js
-import { handlers } from "@/auth";
-
-export const { GET, POST } = handlers;
 
 
 const authOptions = {
