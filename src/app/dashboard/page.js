@@ -42,26 +42,41 @@ export default function DashboardPage() {
       {/* Main Services */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
         <Card title="Log Session">
-          <Link href="/" className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          <Link
+            href="/"
+            className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
             Log Your Hours
           </Link>
-          <p className="text-sm text-gray-600 mt-2">Track your work sessions and hours</p>
+          <p className="text-sm text-gray-600 mt-2">
+            Track your work sessions and hours
+          </p>
         </Card>
 
         <Card title="Browse Shifts">
-          <Link href="/browse" className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          <Link
+            href="/browse"
+            className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
             Find Shifts
           </Link>
-          <p className="text-sm text-gray-600 mt-2">Browse and book available shifts</p>
+          <p className="text-sm text-gray-600 mt-2">
+            Browse and book available shifts
+          </p>
         </Card>
 
         {/* SUPERVISOR & ADMIN ONLY */}
         {(role === "supervisor" || role === "admin") && (
           <Card title="Approve Sessions">
-            <Link href="/approve-sessions" className="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            <Link
+              href="/approve-sessions"
+              className="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+            >
               Review Sessions
             </Link>
-            <p className="text-sm text-gray-600 mt-2">Approve student work sessions</p>
+            <p className="text-sm text-gray-600 mt-2">
+              Approve student work sessions
+            </p>
           </Card>
         )}
       </div>
@@ -69,7 +84,10 @@ export default function DashboardPage() {
       {/* Role-specific sections */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card title="Profile">
-          <Link href="/profile" className="inline-block bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700">
+          <Link
+            href="/profile"
+            className="inline-block bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-700"
+          >
             View / Edit Profile
           </Link>
         </Card>
@@ -77,7 +95,10 @@ export default function DashboardPage() {
         {/* STUDENT ONLY */}
         {role === "student" && (
           <Card title="My Activity">
-            <Link href="/student/my-shifts" className="inline-block bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700">
+            <Link
+              href="/student/my-shifts"
+              className="inline-block bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700"
+            >
               My Shifts
             </Link>
           </Card>
@@ -86,19 +107,36 @@ export default function DashboardPage() {
         {/* SUPERVISOR ONLY */}
         {role === "supervisor" && (
           <Card title="Supervisor Tools">
-            <Link href="/browse/create" className="inline-block bg-orange-600 text-white px-3 py-2 rounded hover:bg-orange-700">
-              Create New Shift
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/browse/create"
+                className="inline-block bg-orange-600 text-white px-3 py-2 rounded hover:bg-orange-700"
+              >
+                Create New Shift
+              </Link>
+              <Link
+                href="/supervisor/student-shifts"
+                className="inline-block bg-black text-white px-3 py-2 rounded hover:bg-gray-900"
+              >
+                View Student Shifts
+              </Link>
+            </div>
           </Card>
         )}
 
         {/* ADMIN (optional) */}
         {role === "admin" && (
           <Card title="Admin Tools">
-            <Link href="/admin/users" className="inline-block bg-red-600 text-white px-3 py-2 rounded mr-2 hover:bg-red-700">
+            <Link
+              href="/admin/users"
+              className="inline-block bg-red-600 text-white px-3 py-2 rounded mr-2 hover:bg-red-700"
+            >
               Manage Users
             </Link>
-            <Link href="/admin/reports" className="inline-block bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700">
+            <Link
+              href="/admin/reports"
+              className="inline-block bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"
+            >
               Reports
             </Link>
           </Card>
