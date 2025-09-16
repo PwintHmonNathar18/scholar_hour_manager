@@ -9,10 +9,13 @@ export async function GET(req) {
   const department = searchParams.get("department");
   const q = department ? { department } : {};
   try {
-    const items = await Shift.find(q).populate("supervisor", "name email").populate("bookedBy", "name email").sort({ start: 1 });
+    const items = await Shift.find(q)
+      .populate("bookings.student", "name email")
+      .populate("attendances.student", "name email")
+      .sort({ start: 1 });
     return Response.json({ items });
   } catch (err) {
-    return new Response("Error: " + err.message, { status: 500 });
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
 
@@ -21,18 +24,19 @@ export async function POST(req) {
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== "supervisor") {
-      return new Response("Unauthorized: Not a supervisor", { status: 401 });
+      return Response.json({ error: "Unauthorized: Not a supervisor" }, { status: 401 });
     }
     const body = await req.json();
     const supervisor = await User.findOne({ email: session.user.email });
-    if (!supervisor) return new Response("Supervisor not found", { status: 404 });
+    if (!supervisor) return Response.json({ error: "Supervisor not found" }, { status: 404 });
     const shift = await Shift.create({
       ...body,
       supervisor: supervisor._id,
-      bookedBy: [],
+      bookings: [],
+      attendances: [],
     });
     return Response.json(shift, { status: 201 });
   } catch (err) {
-    return new Response("Error: " + err.message, { status: 500 });
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }

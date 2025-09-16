@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "@/auth.config";
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
 import User from "@/models/User";
@@ -11,7 +11,8 @@ export async function POST(_req, { params }) {
   }
   await connectDB();
 
-  const shiftId = params.id;
+  const { id } = await params;
+  const shiftId = id;
 
   const me = await User.findOne({ email: session.user.email }).select("_id").lean();
   if (!me?._id) {

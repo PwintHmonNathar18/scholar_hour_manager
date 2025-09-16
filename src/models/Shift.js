@@ -41,6 +41,7 @@ const ShiftSchema = new Schema(
     start: Date,
     end: Date,
     maxSlots: Number,
+    supervisor: { type: Schema.Types.ObjectId, ref: "User" }, // who created the shift
 
     // NEW:
     bookings: [BookingSchema],      // students who booked the shift

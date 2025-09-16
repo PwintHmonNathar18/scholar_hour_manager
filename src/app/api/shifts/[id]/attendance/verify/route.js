@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "@/auth.config";
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
 import User from "@/models/User";
@@ -27,7 +27,8 @@ export async function POST(req, { params }) {
 
   await connectDB();
 
-  const shiftId = params.id;
+  const { id } = await params;
+  const shiftId = id;
   const student = await User.findOne({ email: studentEmail }).select("_id").lean();
   if (!student?._id) return NextResponse.json({ error: "Student not found" }, { status: 404 });
 

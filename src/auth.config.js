@@ -45,6 +45,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
+    async redirect({ url, baseUrl }) {
+      // Always redirect to dashboard after sign in
+      if (url === baseUrl || url === `${baseUrl}/signin` || url === `${baseUrl}/`) {
+        return `${baseUrl}/dashboard`;
+      }
+      return url;
+    },
   },
   pages: {
     signIn: "/signin",
