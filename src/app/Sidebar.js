@@ -11,6 +11,10 @@ export default function Sidebar() {
       <nav className="flex flex-col gap-3">
         <Link href="/dashboard" className="hover:underline">Dashboard</Link>
         <Link href="/profile" className="hover:underline">Profile</Link>
+        {/* only show for admins */}
+        {session?.user?.role === "admin" && (
+          <Link href="/admin" className="hover:underline">Admin</Link>
+        )}
         {/* Add more general navigation links as needed */}
       </nav>
       
