@@ -79,24 +79,29 @@ export async function DELETE(req, { params }) {
   try {
     const { id } = await params;
     const session = await auth();
-    if (!session?.user || session.user.role !== "supervisor") {
-      return Response.json({ error: "Unauthorized: Not a supervisor" }, { status: 401 });
+    if (!session?.user || (session.user.role !== "supervisor" && session.user.role !== "admin")) {
+      return Response.json({ error: "Unauthorized: Not a supervisor or admin" }, { status: 401 });
     }
 
-    const supervisor = await User.findOne({ email: session.user.email });
-    if (!supervisor) {
-      return Response.json({ error: "Supervisor not found" }, { status: 404 });
+    // For supervisor, check ownership. For admin, allow delete any shift.
+    let supervisor;
+    if (session.user.role === "supervisor") {
+      supervisor = await User.findOne({ email: session.user.email });
+      if (!supervisor) {
+        return Response.json({ error: "Supervisor not found" }, { status: 404 });
+      }
     }
 
-    // Find the shift and check if the current supervisor owns it
     const existingShift = await Shift.findById(id);
     if (!existingShift) {
       return Response.json({ error: "Shift not found" }, { status: 404 });
     }
 
-    // Check if the supervisor owns this shift (allow deleting if no supervisor is set for backward compatibility)
-    if (existingShift.supervisor && existingShift.supervisor.toString() !== supervisor._id.toString()) {
-      return Response.json({ error: "Unauthorized: You can only delete your own shifts" }, { status: 403 });
+    if (session.user.role === "supervisor") {
+      // Check if the supervisor owns this shift (allow deleting if no supervisor is set for backward compatibility)
+      if (existingShift.supervisor && existingShift.supervisor.toString() !== supervisor._id.toString()) {
+        return Response.json({ error: "Unauthorized: You can only delete your own shifts" }, { status: 403 });
+      }
     }
 
     // Check if there are active bookings

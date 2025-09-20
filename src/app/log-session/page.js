@@ -12,6 +12,8 @@ export default function LogSessionPage() {
     activity: "",
     startAt: "",
     endAt: "",
+    type: "internal", // new field
+    organizer: "",    // new field
   });
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +56,7 @@ export default function LogSessionPage() {
     const emailToSubmit = session?.user?.role === "student" ? session.user.email : form.userEmail;
     
     // basic validation
-    if (!emailToSubmit || !form.activity || !form.startAt || !form.endAt) {
+    if (!emailToSubmit || !form.activity || !form.startAt || !form.endAt || !form.type || !form.organizer) {
       alert("Please fill all fields.");
       return;
     }
@@ -79,6 +81,8 @@ export default function LogSessionPage() {
       activity: "", 
       startAt: "", 
       endAt: "",
+      type: "internal",
+      organizer: "",
       // For students, keep their email, for supervisors keep the entered email
       userEmail: session?.user?.role === "student" ? session.user.email : f.userEmail
     }));
@@ -110,7 +114,7 @@ export default function LogSessionPage() {
             <div></div> {/* Empty div for grid alignment */}
           </>
         )}
-        
+
         {/* Show current user info for students */}
         {session?.user?.role === "student" && (
           <div className="col-span-full bg-blue-50 p-3 rounded border">
@@ -119,14 +123,33 @@ export default function LogSessionPage() {
             </p>
           </div>
         )}
-        
+
         <input
           className="border p-2 rounded col-span-full"
           placeholder="Activity (e.g., Library, Tutoring)"
           value={form.activity}
           onChange={onChange("activity")}
         />
-        
+
+        <div className="col-span-full flex gap-4 items-center">
+          <label className="text-sm text-gray-600">Type:</label>
+          <select
+            className="border p-2 rounded"
+            value={form.type}
+            onChange={onChange("type")}
+          >
+            <option value="internal">Internal (school)</option>
+            <option value="external">External (outside school)</option>
+          </select>
+        </div>
+
+        <input
+          className="border p-2 rounded col-span-full"
+          placeholder="Organizer (who organizes the program)"
+          value={form.organizer}
+          onChange={onChange("organizer")}
+        />
+
         <label className="text-sm text-gray-600">Start</label>
         <label className="text-sm text-gray-600">End</label>
         <input

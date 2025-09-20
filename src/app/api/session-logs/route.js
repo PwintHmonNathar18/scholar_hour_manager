@@ -1,7 +1,7 @@
-
 import connectDB from "@/lib/db";
 import SessionLog from "@/models/SessionLog";
 import mongoose from "mongoose";
+import { auth } from "@/auth.config";
 
 export async function GET(req) {
   await connectDB();

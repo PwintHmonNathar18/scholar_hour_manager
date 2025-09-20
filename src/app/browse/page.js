@@ -135,6 +135,18 @@ export default function BrowsePage() {
             <div key={shift._id} className="border rounded-xl p-4 bg-white shadow">
               <div className="font-bold text-lg">{shift.title}</div>
               <div className="text-sm text-gray-600">{shift.department} | {new Date(shift.start).toLocaleString()} - {new Date(shift.end).toLocaleString()}</div>
+              <div className="text-xs text-gray-500 mt-1">
+                <span>
+                  Created by: {shift.supervisor?.name ? (
+                    <a
+                      href={`/profile?email=${encodeURIComponent(shift.supervisor.email)}`}
+                      className="text-blue-600 underline hover:text-blue-800 cursor-pointer"
+                    >
+                      {shift.supervisor.name}
+                    </a>
+                  ) : "Unknown"}
+                </span>
+              </div>
               <div className="mt-2">{shift.description}</div>
               <div className="mt-2 text-sm">
                 Slots: {shift.bookings?.filter(b => b.status === "booked").length || 0} / {shift.maxSlots}
@@ -178,9 +190,11 @@ export default function BrowsePage() {
                   </>
                 )}
                 
-                {session?.user?.role === "supervisor" && (
+                {(session?.user?.role === "supervisor" || session?.user?.role === "admin") && (
                   <>
-                    <Link href={`/browse/edit/${shift._id}`} className="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Edit</Link>
+                    {session?.user?.role === "supervisor" && (
+                      <Link href={`/browse/edit/${shift._id}`} className="bg-yellow-500 text-white px-3 py-1 rounded text-sm">Edit</Link>
+                    )}
                     <button 
                       onClick={() => handleDeleteShift(shift._id)}
                       className="bg-red-500 text-white px-3 py-1 rounded text-sm"

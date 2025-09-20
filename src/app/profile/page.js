@@ -1,9 +1,12 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const requestedEmail = searchParams.get("email");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -11,14 +14,17 @@ export default function ProfilePage() {
     program: "",
     workedHours: 0,
     approvedSessions: 0,
+    contact: "",
+    availableHour: "",
   });
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (session?.user) {
+    if (session?.user || requestedEmail) {
       // Fetch user info from API (or session)
-      fetch(`/api/profile`)
+      const url = requestedEmail ? `/api/profile?email=${encodeURIComponent(requestedEmail)}` : `/api/profile`;
+      fetch(url)
         .then((res) => res.json())
         .then((data) => {
           setForm({
@@ -28,6 +34,8 @@ export default function ProfilePage() {
             program: data.program || "",
             workedHours: data.workedHours || 0,
             approvedSessions: data.approvedSessions || 0,
+            contact: data.contact || "",
+            availableHour: data.availableHour || "",
           });
         });
     }
@@ -38,10 +46,22 @@ export default function ProfilePage() {
   const handleSave = async (e) => {
     e.preventDefault();
     setMessage("");
+    // Only send relevant fields for each role
+    let payload = {
+      name: form.name,
+      department: form.department,
+    };
+    if (session?.user?.role === "student") {
+      payload.program = form.program;
+    }
+    if (session?.user?.role === "supervisor" || session?.user?.role === "admin") {
+      payload.contact = form.contact;
+      payload.availableHour = form.availableHour;
+    }
     const res = await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setMessage("Profile updated!");
@@ -52,55 +72,73 @@ export default function ProfilePage() {
   };
 
   if (!session) return <div className="p-6">Please sign in to view your profile.</div>;
+  // If viewing another user's profile, do not show edit controls
+  const isOwnProfile = !requestedEmail || (session?.user?.email === requestedEmail);
 
   return (
-    <main className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-6 text-gray-900">Profile</h1>
-      <form onSubmit={handleSave} className="space-y-4 bg-white rounded-xl shadow p-6">
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">ID (email)</label>
-          <input type="text" value={form.email} disabled className="border p-2 rounded w-full bg-gray-100 text-gray-700" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Name</label>
-          <input type="text" value={form.name} onChange={handleChange("name")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Department</label>
-          <input type="text" value={form.department} onChange={handleChange("department")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Program</label>
-          <input type="text" value={form.program} onChange={handleChange("program")} disabled={!editing} className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Worked Hours</label>
-          <input type="text" value={(form.workedHours / 60).toFixed(2)} disabled className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-gray-700 font-medium">Approved Sessions</label>
-          <input type="number" value={form.approvedSessions || 0} disabled className="border p-2 rounded w-full text-gray-900" />
-        </div>
-        {message && <div className="text-green-600 text-sm">{message}</div>}
-        {session?.user?.role === "admin" && (
-          <div className="flex gap-2 mt-4">
-            {!editing ? (
-              <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={() => setEditing(true)}>
-                Edit
-              </button>
-            ) : (
-              <>
-                <button type="button" className="bg-black text-white rounded py-2 px-4" onClick={handleSave}>
-                  Save
-                </button>
-                <button type="button" className="bg-gray-300 rounded py-2 px-4 text-gray-900" onClick={() => setEditing(false)}>
-                  Cancel
-                </button>
-              </>
-            )}
+    <main className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-pink-50">
+      <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center">
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-400 to-pink-400 flex items-center justify-center mb-2 shadow">
+            <span className="text-5xl">👤</span>
           </div>
-        )}
-      </form>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">{form.name || "Profile"}</h1>
+          <p className="text-gray-500 text-sm">{form.email}</p>
+        </div>
+        <form onSubmit={handleSave} className="w-full grid grid-cols-1 gap-5">
+          <div className="flex items-center gap-3">
+            <label className="w-32 text-gray-700 font-medium">Department</label>
+            <input type="text" value={form.department} onChange={handleChange("department")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+          </div>
+          {(session?.user?.role === "supervisor" || session?.user?.role === "admin" || (form.role === "supervisor" || form.role === "admin")) && (
+            <>
+              <div className="flex items-center gap-3">
+                <label className="w-32 text-gray-700 font-medium">Contact</label>
+                <input type="text" value={form.contact} onChange={handleChange("contact")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              </div>
+              <div className="flex items-center gap-3">
+                <label className="w-32 text-gray-700 font-medium">Available Hour</label>
+                <input type="text" value={form.availableHour} onChange={handleChange("availableHour")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              </div>
+            </>
+          )}
+          {(session?.user?.role === "student" || form.role === "student") && (
+            <>
+              <div className="flex items-center gap-3">
+                <label className="w-32 text-gray-700 font-medium">Program</label>
+                <input type="text" value={form.program} onChange={handleChange("program")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              </div>
+              <div className="flex items-center gap-3">
+                <label className="w-32 text-gray-700 font-medium">Worked Hours</label>
+                <input type="text" value={(form.workedHours / 60).toFixed(2) + " hrs"} disabled className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              </div>
+              <div className="flex items-center gap-3">
+                <label className="w-32 text-gray-700 font-medium">Approved Sessions</label>
+                <input type="number" value={form.approvedSessions || 0} disabled className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              </div>
+            </>
+          )}
+          {message && <div className="text-green-600 text-sm text-center">{message}</div>}
+          { (session?.user?.role === "admin" || session?.user?.email === form.email) && isOwnProfile && (
+            <div className="flex gap-4 justify-center mt-4">
+              {!editing ? (
+                <button type="button" className="bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-lg py-2 px-6 font-bold shadow" onClick={() => setEditing(true)}>
+                  Edit Profile
+                </button>
+              ) : (
+                <>
+                  <button type="button" className="bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-lg py-2 px-6 font-bold shadow" onClick={handleSave}>
+                    Save
+                  </button>
+                  <button type="button" className="bg-gray-200 rounded-lg py-2 px-6 text-gray-900 font-bold shadow" onClick={() => setEditing(false)}>
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </form>
+      </div>
     </main>
   );
 }

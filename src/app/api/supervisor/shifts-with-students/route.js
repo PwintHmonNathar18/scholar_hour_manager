@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
-import { auth } from "@/auth";
+import { auth } from "@/auth.config";
 
 export async function GET() {
   const session = await auth();

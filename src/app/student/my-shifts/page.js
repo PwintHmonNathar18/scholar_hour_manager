@@ -61,6 +61,22 @@ export default function MyShiftsPage() {
     }
   };
 
+  const deleteShift = async (shiftId) => {
+    if (!window.confirm("Are you sure you want to delete this cancelled shift?")) return;
+    try {
+      const response = await fetch(`/api/shifts/${shiftId}/delete-booking`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setShifts(shifts.filter(s => s._id !== shiftId));
+      } else {
+        alert("Failed to delete shift.");
+      }
+    } catch (err) {
+      alert("Error deleting shift.");
+    }
+  };
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "short",
@@ -167,6 +183,14 @@ export default function MyShiftsPage() {
                       className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
                     >
                       Cancel Booking
+                    </button>
+                  )}
+                  {booking?.status === "cancelled" && (
+                    <button
+                      onClick={() => deleteShift(shift._id)}
+                      className="bg-gray-400 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
+                    >
+                      Delete
                     </button>
                   )}
                 </div>

@@ -6,6 +6,8 @@ const SessionLogSchema = new mongoose.Schema({
   startAt: { type: Date, required: true },
   endAt:   { type: Date, required: true },
   minutes: { type: Number, required: true },
+  type: { type: String, enum: ["internal", "external"], required: true },
+  organizer: { type: String, required: true },
   approved: { type: Boolean, default: false },
   disapproved: { type: Boolean, default: false },
 },{ timestamps:true });

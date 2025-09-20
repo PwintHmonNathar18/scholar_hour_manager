@@ -12,6 +12,7 @@ export async function GET(req) {
     const items = await Shift.find(q)
       .populate("bookings.student", "name email")
       .populate("attendances.student", "name email")
+      .populate("supervisor", "name email")
       .sort({ start: 1 });
     return Response.json({ items });
   } catch (err) {

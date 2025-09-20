@@ -7,13 +7,18 @@ export async function GET(req) {
   await connectDB();
   const session = await auth();
   if (!session?.user?.email) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const user = await User.findOne({ email: session.user.email });
+  const { searchParams } = new URL(req.url);
+  const requestedEmail = searchParams.get("email");
+  const emailToFind = requestedEmail || session.user.email;
+  const user = await User.findOne({ email: emailToFind });
   if (!user) return Response.json({ error: "Not found" }, { status: 404 });
   return Response.json({
     name: user.name,
     email: user.email,
     department: user.department,
     program: user.program,
+    contact: user.contact,
+    availableHour: user.availableHour,
     workedHours: await SessionLog.aggregate([
       { $match: { userEmail: user.email, approved: true } },
       { $group: { _id: null, total: { $sum: "$minutes" } } }
@@ -34,6 +39,8 @@ export async function POST(req) {
       department: body.department,
       program: body.program,
       maxHoursPerWeek: body.maxHoursPerWeek,
+      contact: body.contact,
+      availableHour: body.availableHour,
     },
     { new: true }
   );
