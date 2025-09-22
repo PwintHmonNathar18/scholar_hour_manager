@@ -3,6 +3,20 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+/* NEW: helper to turn total minutes into "X hours Y minutes" */
+function formatDurationFromMinutes(mins = 0) {
+  const safe = Number.isFinite(mins) ? Math.max(0, Math.floor(mins)) : 0;
+  const h = Math.floor(safe / 60);
+  const m = safe % 60;
+
+  const parts = [];
+  if (h) parts.push(`${h} ${h === 1 ? "hour" : "hours"}`);
+  // If there are hours, still show 0 minutes for clarity (e.g., "2 hours 0 minutes")
+  if (m || h === 0) parts.push(`${m} ${m === 1 ? "minute" : "minutes"}`);
+
+  return parts.join(" ");
+}
+
 export default function ApproveSessionsPage() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -16,7 +30,7 @@ export default function ApproveSessionsPage() {
       .then((res) => res.json())
       .then((data) => setLogs(data.items || []));
   }, [session]);
-
+  
   const approveLog = async (log) => {
     setError(""); setSuccess("");
     const res = await fetch(`/api/session-logs/approve`, {
@@ -62,7 +76,8 @@ export default function ApproveSessionsPage() {
             <div><b>User:</b> {log.userEmail}</div>
             <div><b>Start:</b> {new Date(log.startAt).toLocaleString()}</div>
             <div><b>End:</b> {new Date(log.endAt).toLocaleString()}</div>
-            <div><b>Minutes:</b> {log.minutes}</div>
+            {/* CHANGED: show Duration in hours/minutes instead of raw minutes */}
+            <div><b>Duration:</b> {formatDurationFromMinutes(log.minutes)}</div>
             <div className="flex gap-2 mt-3">
               <button 
                 className="bg-green-600 text-white rounded py-2 px-4 hover:bg-green-700" 

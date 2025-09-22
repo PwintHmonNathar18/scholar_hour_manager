@@ -35,16 +35,18 @@ export default function ProfilePage() {
             workedHours: data.workedHours || 0,
             approvedSessions: data.approvedSessions || 0,
             contact: data.contact || "",
-            availableHour: data.availableHour || "",
+            // CHANGED: ensure availableHour is a string for a controlled <input type="number">
+            availableHour: (Number.isFinite(data.availableHour) ? String(data.availableHour) : "") || "",
           });
         });
     }
-  }, [session]);
+    // CHANGED: re-run when requestedEmail changes
+  }, [session, requestedEmail]); // CHANGED
 
   const handleChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const handleSave = async (e) => {
-    e.preventDefault();
+    e.preventDefault?.(); // NEW: safe-guard whether called by onSubmit or onClick
     setMessage("");
     // Only send relevant fields for each role
     let payload = {
@@ -56,7 +58,8 @@ export default function ProfilePage() {
     }
     if (session?.user?.role === "supervisor" || session?.user?.role === "admin") {
       payload.contact = form.contact;
-      payload.availableHour = form.availableHour;
+      // CHANGED: coerce to number so API stores correctly
+      payload.availableHour = Number(form.availableHour) || 0; // CHANGED
     }
     const res = await fetch("/api/profile", {
       method: "POST",
@@ -88,7 +91,13 @@ export default function ProfilePage() {
         <form onSubmit={handleSave} className="w-full grid grid-cols-1 gap-5">
           <div className="flex items-center gap-3">
             <label className="w-32 text-gray-700 font-medium">Department</label>
-            <input type="text" value={form.department} onChange={handleChange("department")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+              <input
+                type="text"
+                value={form.department}
+                onChange={handleChange("department")}
+                disabled={!editing}
+                className="border p-2 rounded w-full text-gray-900 bg-gray-50"  // ← fixed
+              />
           </div>
           {(session?.user?.role === "supervisor" || session?.user?.role === "admin" || (form.role === "supervisor" || form.role === "admin")) && (
             <>
@@ -98,7 +107,16 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-3">
                 <label className="w-32 text-gray-700 font-medium">Available Hour</label>
-                <input type="text" value={form.availableHour} onChange={handleChange("availableHour")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
+                {/* CHANGED: number input with min/step; still controlled */}
+                <input
+                  type="number"               // CHANGED
+                  min={0}                     // NEW
+                  step={0.25}                 // NEW
+                  value={form.availableHour}
+                  onChange={handleChange("availableHour")}
+                  disabled={!editing}
+                  className="border p-2 rounded w-full text-gray-900 bg-gray-50"
+                />
               </div>
             </>
           )}
@@ -127,6 +145,7 @@ export default function ProfilePage() {
                 </button>
               ) : (
                 <>
+                  {/* keep button type as button; handler covers both click/submit */}
                   <button type="button" className="bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-lg py-2 px-6 font-bold shadow" onClick={handleSave}>
                     Save
                   </button>

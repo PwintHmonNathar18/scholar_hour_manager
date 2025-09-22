@@ -12,7 +12,9 @@ const UserSchema = new mongoose.Schema(
   department: String,
   workedHours: { type: Number, default: 0 },
   contact: { type: String, default: "" },
-  availableHour: { type: String, default: "" },
+  department: { type: String, default: "" },        // NEW
+  contact: { type: String, default: "" },           // NEW
+  availableHour: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
