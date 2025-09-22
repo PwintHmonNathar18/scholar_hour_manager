@@ -35,8 +35,8 @@ export default function ProfilePage() {
             workedHours: data.workedHours || 0,
             approvedSessions: data.approvedSessions || 0,
             contact: data.contact || "",
-            // CHANGED: ensure availableHour is a string for a controlled <input type="number">
-            availableHour: (Number.isFinite(data.availableHour) ? String(data.availableHour) : "") || "",
+            // CHANGED: ensure availableHour is a string for a controlled <input type="text">
+            availableHour: data.availableHour || "",
           });
         });
     }
@@ -58,8 +58,7 @@ export default function ProfilePage() {
     }
     if (session?.user?.role === "supervisor" || session?.user?.role === "admin") {
       payload.contact = form.contact;
-      // CHANGED: coerce to number so API stores correctly
-      payload.availableHour = Number(form.availableHour) || 0; // CHANGED
+      payload.availableHour = form.availableHour;
     }
     const res = await fetch("/api/profile", {
       method: "POST",
@@ -107,11 +106,8 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-3">
                 <label className="w-32 text-gray-700 font-medium">Available Hour</label>
-                {/* CHANGED: number input with min/step; still controlled */}
                 <input
-                  type="number"               // CHANGED
-                  min={0}                     // NEW
-                  step={0.25}                 // NEW
+                  type="text"
                   value={form.availableHour}
                   onChange={handleChange("availableHour")}
                   disabled={!editing}
