@@ -19,15 +19,15 @@ export default function SignInPage() {
     
     try {
       const res = await signIn("credentials", {
-        redirect: false,
+        redirect: true, // Use NextAuth redirect instead of manual redirect
+        callbackUrl: "/dashboard", // This will be handled by the redirect callback
         email,
         password,
       });
       
+      // This code won't execute if redirect: true works
       if (res?.error) {
         setError("Invalid email or password");
-      } else if (res?.ok) {
-        router.push("/dashboard");
       }
     } catch (error) {
       console.error("Sign in error:", error);

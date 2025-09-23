@@ -49,10 +49,23 @@ export const authOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Always redirect to dashboard after sign in
-      if (url === baseUrl || url === `${baseUrl}/signin` || url === `${baseUrl}/`) {
-        return `${baseUrl}/dashboard`;
+      console.log("Redirect called with url:", url, "baseUrl:", baseUrl);
+      
+      // Handle sign in redirects - always go to dashboard
+      if (url.startsWith(baseUrl + '/signin') || 
+          url === baseUrl + '/' || 
+          url === baseUrl ||
+          url.includes('/auth/signin')) {
+        const dashboardUrl = `${baseUrl}/dashboard`;
+        console.log("Redirecting to dashboard:", dashboardUrl);
+        return dashboardUrl;
       }
+      
+      // For other URLs, make sure they start with baseUrl
+      if (url.startsWith('/') && !url.startsWith(baseUrl)) {
+        return baseUrl + url;
+      }
+      
       return url;
     },
   },
