@@ -2,10 +2,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
-import { auth } from "@/auth.config";
+import User from "@/models/User"; // Import User model for population
+import { getAuthSession } from "@/lib/auth-helpers";
 
 export async function GET() {
-  const session = await auth();
+  const session = await getAuthSession();
+  
   if (!session?.user || !["supervisor", "admin"].includes(session.user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

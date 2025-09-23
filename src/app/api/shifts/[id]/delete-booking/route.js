@@ -1,10 +1,10 @@
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
-import { auth } from "@/auth.config";
+import { getAuthSession } from "@/lib/auth-helpers";
 
 export async function DELETE(req, { params }) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.email) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const shiftId = params.id;
   // Remove the booking for this user from the shift

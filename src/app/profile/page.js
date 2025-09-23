@@ -1,9 +1,9 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const requestedEmail = searchParams.get("email");
@@ -155,5 +155,13 @@ export default function ProfilePage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }

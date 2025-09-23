@@ -1,9 +1,7 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import connectDB from "@/lib/db";
-import User from "@/models/User";
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -13,12 +11,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          await connectDB();
-          const user = await User.findOne({ email: credentials.email });
-          // For demo: accept any password if user exists
-          if (user) {
+          // Use API route instead of direct database access
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
+
+          if (response.ok) {
+            const user = await response.json();
             return {
-              id: user._id.toString(),
+              id: user.id,
               name: user.name,
               email: user.email,
               role: user.role,
@@ -32,18 +40,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    async session({ session, token }) {
-      if (token?.role) {
-        session.user.role = token.role;
-      }
-      return session;
-    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
       }
       return token;
+    },
+    async session({ session, token }) {
+      session.user.role = token?.role || "student";
+      return session;
     },
     async redirect({ url, baseUrl }) {
       // Always redirect to dashboard after sign in
@@ -57,4 +66,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/signin",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+export default NextAuth(authOptions);

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth.config";
+import { getAuthSession } from "@/lib/auth-helpers";
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
 import User from "@/models/User";
 
 export async function POST(_req, { params }) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

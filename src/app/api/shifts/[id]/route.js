@@ -1,7 +1,7 @@
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
 import User from "@/models/User";
-import { auth } from "@/auth.config";
+import { getAuthSession } from "@/lib/auth-helpers";
 
 export async function GET(req, { params }) {
   await connectDB();
@@ -30,7 +30,7 @@ export async function PUT(req, { params }) {
   await connectDB();
   try {
     const { id } = await params;
-    const session = await auth();
+    const session = await getAuthSession();
     if (!session?.user || session.user.role !== "supervisor") {
       return Response.json({ error: "Unauthorized: Not a supervisor" }, { status: 401 });
     }
@@ -78,7 +78,7 @@ export async function DELETE(req, { params }) {
   await connectDB();
   try {
     const { id } = await params;
-    const session = await auth();
+    const session = await getAuthSession();
     if (!session?.user || (session.user.role !== "supervisor" && session.user.role !== "admin")) {
       return Response.json({ error: "Unauthorized: Not a supervisor or admin" }, { status: 401 });
     }

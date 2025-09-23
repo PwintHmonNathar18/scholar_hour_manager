@@ -1,10 +1,10 @@
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import { auth } from "@/auth.config";
+import { getAuthSession } from "@/lib/auth-helpers";
 
 export async function GET(req, { params }) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user || session.user.role !== "admin") {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user || session.user.role !== "admin") {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -29,7 +29,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user || session.user.role !== "admin") {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }

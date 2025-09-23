@@ -1,7 +1,7 @@
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 import SessionLog from "@/models/SessionLog";
-import { auth } from "@/auth.config";
+import { getAuthSession } from "@/lib/auth-helpers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function PATCH(req) {
 
 export async function GET(req) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.email) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { searchParams } = new URL(req.url);
   const requestedEmail = searchParams.get("email");
@@ -43,7 +43,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   await connectDB();
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.email) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();

@@ -1,15 +1,22 @@
-import { auth } from "./auth";
+import { withAuth } from "next-auth/middleware";
 
-export default auth(async (req) => {
-  const { nextUrl } = req;
+export default withAuth(
+  function middleware(req) {
+    const { nextUrl } = req;
 
-  // Protect all routes under /admin
-  if (nextUrl.pathname.startsWith("/admin")) {
-    const role = req.auth?.user?.role;
-    if (role !== "admin") {
-      return Response.redirect(new URL("/403", nextUrl));
+    // Protect all routes under /admin
+    if (nextUrl.pathname.startsWith("/admin")) {
+      const role = req.nextauth?.token?.role;
+      if (role !== "admin") {
+        return Response.redirect(new URL("/403", nextUrl));
+      }
     }
-  }
 
-  // Allow everything else
-});
+    // Allow everything else
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token
+    },
+  }
+);

@@ -116,7 +116,7 @@ export default function MyShiftsPage() {
 
       {shifts.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">You haven't booked any shifts yet.</p>
+          <p className="text-gray-600 mb-4">You haven&apos;t booked any shifts yet.</p>
           <a
             href="/browse"
             className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
