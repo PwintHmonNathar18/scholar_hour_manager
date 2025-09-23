@@ -49,3 +49,4 @@ src/app/api/debug/
 # lock files (keep only package-lock.json)
 pnpm-lock.yaml
 yarn.lock
+nginx.conf
