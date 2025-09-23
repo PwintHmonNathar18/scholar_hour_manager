@@ -8,7 +8,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: '3002',
-        MONGODB_URI: 'mongodb+srv://thantshweyee:thantshweyee123@cluster0.irhm5.mongodb.net/scholar_hour_manager',
+        MONGODB_URI: 'mongodb+srv://Lili:Phnt43025471@cluster0.qxli1n7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
         NEXTAUTH_URL: 'http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager',
         NEXTAUTH_SECRET: 'your-secret-key-here-change-this-in-production'
       },
