@@ -60,7 +60,7 @@ if [ ! -f ".env" ]; then
         print_error ".env.production.example not found. Creating basic .env..."
         cat > .env << EOF
 MONGODB_URI=mongodb+srv://Lili:Phnt43025471@cluster0.qxli1n7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-NEXTAUTH_URL=http://wad-6632067.eastus2.cloudapp.azure.com
+NEXTAUTH_URL=http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager
 NEXTAUTH_SECRET=8Vj8N4G1RIi8ChHZqAJhf8w8QcnIfT6kz2ZHPzTOu5Y=
 AUTH_TRUST_HOST=true
 NODE_ENV=production
@@ -181,7 +181,7 @@ echo "• Check nginx status: sudo systemctl status nginx"
 echo "• View nginx logs: sudo tail -f /var/log/nginx/error.log"
 echo ""
 echo "🌐 Your Scholar Hour Manager should now be accessible at:"
-echo "   http://wad-6632067.eastus2.cloudapp.azure.com"
+echo "   http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager"
 echo ""
 
 # Show current status

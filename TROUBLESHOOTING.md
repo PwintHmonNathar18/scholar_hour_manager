@@ -36,7 +36,7 @@ rm -f /home/azureuser/package-lock.json
 # 3. Set up proper environment
 cat > .env << 'EOF'
 MONGODB_URI=mongodb+srv://Lili:Phnt43025471@cluster0.qxli1n7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-NEXTAUTH_URL=http://wad-6632067.eastus2.cloudapp.azure.com
+NEXTAUTH_URL=http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager
 NEXTAUTH_SECRET=8Vj8N4G1RIi8ChHZqAJhf8w8QcnIfT6kz2ZHPzTOu5Y=
 AUTH_TRUST_HOST=true
 NODE_ENV=production
@@ -61,7 +61,15 @@ server {
     listen 80;
     server_name wad-6632067.eastus2.cloudapp.azure.com;
 
-    location / {
+    # Root path - landing page
+    location = / {
+        return 200 '<html><body><h1>Welcome to WAD Server</h1><p><a href="/scholar-hour-manager">Scholar Hour Manager</a></p></body></html>';
+        add_header Content-Type text/html;
+    }
+
+    # Scholar Hour Manager App
+    location /scholar-hour-manager {
+        rewrite ^/scholar-hour-manager/?(.*) /$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -70,6 +78,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Prefix /scholar-hour-manager;
         proxy_cache_bypass $http_upgrade;
     }
 }
@@ -107,7 +116,7 @@ pm2 status
 sudo systemctl status nginx
 
 # Check if site is accessible externally
-curl -I http://wad-6632067.eastus2.cloudapp.azure.com
+curl -I http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager
 
 # View logs if there are issues
 pm2 logs scholar-hour-manager
@@ -123,7 +132,7 @@ If you just want to test quickly without Nginx:
 sudo PORT=80 pm2 start npm --name "scholar-hour-manager" -- start
 
 # Or use port 3000 and access via:
-# http://wad-6632067.eastus2.cloudapp.azure.com:3000
+# http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager
 ```
 
 ## Common Error Messages and Solutions
@@ -153,7 +162,7 @@ sudo ufw allow 80
 ```
 
 ### NextAuth CSRF errors
-- Make sure NEXTAUTH_URL matches exactly: `http://wad-6632067.eastus2.cloudapp.azure.com`
+- Make sure NEXTAUTH_URL matches exactly: `http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager`
 - Clear browser cookies and try again
 
 ## Expected Working State
@@ -163,7 +172,7 @@ When everything is working correctly:
 1. PM2 shows `scholar-hour-manager` as `online`
 2. `curl http://localhost:3000` returns HTML
 3. Nginx is `active (running)`
-4. `curl http://wad-6632067.eastus2.cloudapp.azure.com` returns HTML
+4. `curl http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager` returns HTML
 5. You can access the login page in your browser
 
 ## Still Not Working?
@@ -180,5 +189,5 @@ pm2 status
 sudo systemctl status nginx
 sudo ufw status
 curl -v http://localhost:3000
-netstat -tlnp | grep :80
+curl -v http://wad-6632067.eastus2.cloudapp.azure.com/scholar-hour-manager
 ```
