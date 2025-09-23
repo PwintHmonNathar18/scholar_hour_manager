@@ -6,8 +6,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['mongoose'], // Handle mongoose in production
   
   // Configure for subpath deployment
-  basePath: '/scholar-hour-manager',
-  assetPrefix: '/scholar-hour-manager',
+  // Remove basePath and assetPrefix to test if the issue is with this configuration
+  // basePath: '/scholar-hour-manager',
+  // assetPrefix: '/scholar-hour-manager',
   
   env: {
     MONGODB_URI: process.env.MONGODB_URI,
