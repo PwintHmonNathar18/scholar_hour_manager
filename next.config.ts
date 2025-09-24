@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath: '/scholar-hour-manager',
-  assetPrefix: '/scholar-hour-manager',
-  output: 'standalone'
+  // Only use basePath in production
+  ...(process.env.NODE_ENV === 'production' && {
+    basePath: '/scholar-hour-manager',
+    assetPrefix: '/scholar-hour-manager',
+  }),
+  output: 'standalone',
+  serverExternalPackages: ['mongoose']
 };
 
 export default nextConfig;
