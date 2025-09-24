@@ -7,7 +7,7 @@ if (!MONGODB_URI) throw new Error("Please set MONGODB_URI in your .env");
 let cached = global._mongoose;
 if (!cached) cached = global._mongoose = { conn: null, promise: null };
 
-export default async function connectDB() {
+async function connectDB() {
   if (cached.conn) return cached.conn;
   if (!cached.promise) {
     cached.promise = mongoose
@@ -17,3 +17,6 @@ export default async function connectDB() {
   cached.conn = await cached.promise;
   return cached.conn;
 }
+
+export default connectDB;
+export { connectDB };
