@@ -4,8 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 
-console.log("🚀 AUTH.JS FILE IS BEING LOADED!");
-
 export const authOptions = {
   debug: true,
   providers: [
@@ -26,19 +24,35 @@ export const authOptions = {
         console.log("🔍 AUTHORIZE FUNCTION CALLED!");
         console.log("🔍 Credentials received:", credentials);
         
-        // Always return test user for now to see if function is called
-        if (credentials?.email && credentials?.password) {
-          console.log("✅ Returning test user for any credentials");
-          return {
-            id: "1",
-            name: "Test User",
-            email: credentials.email,
-            role: "student"
-          };
+        try {
+          await connectDB();
+          
+          // Check database for registered users
+          const user = await User.findOne({ email: credentials?.email });
+          if (user) {
+            console.log("✅ Found user in database:", user.email);
+            
+            // Simple password check (should use bcrypt in production)
+            if (user.password === credentials?.password) {
+              console.log("✅ Password matches! Authenticating user");
+              return {
+                id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                role: user.role,
+              };
+            } else {
+              console.log("❌ Password doesn't match");
+              return null;
+            }
+          }
+          
+          console.log("❌ No user found with email:", credentials?.email);
+          return null;
+        } catch (error) {
+          console.error("💥 Auth error:", error);
+          return null;
         }
-        
-        console.log("❌ No credentials provided");
-        return null;
       }
     })
   ],
