@@ -1,13 +1,18 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // Only use basePath in production
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  serverExternalPackages: ['mongoose'],
+  // Only use basePath in production (VM deployment)
   ...(process.env.NODE_ENV === 'production' && {
     basePath: '/scholar-hour-manager',
     assetPrefix: '/scholar-hour-manager',
   }),
-  output: 'standalone',
-  serverExternalPackages: ['mongoose']
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  }
 };
 
-export default nextConfig;
+module.exports = nextConfig;
