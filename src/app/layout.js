@@ -2,7 +2,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "./components/Sidebar";
 // If you have global Tailwind or CSS, import it here:
 import "./globals.css"; // adjust/remove if you don't have this file
 

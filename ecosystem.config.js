@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'scholar-hour-manager',
-      script: 'npm',
-      args: 'start',
+      script: 'node',
+      args: '.next/standalone/scholar_hour_manager/server.js',
       cwd: '/home/azureuser/scholar_hour_manager', // Update this path based on your VM user
       instances: 1,
       autorestart: true,
