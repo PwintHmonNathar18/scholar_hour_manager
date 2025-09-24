@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: '',
   output: 'standalone',
   serverExternalPackages: ['mongoose'],
   eslint: {
