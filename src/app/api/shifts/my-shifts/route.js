@@ -1,13 +1,13 @@
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
 import User from "@/models/User";
-import { getAuthSession } from "@/lib/auth-helpers";
+import { auth } from "@/auth.config";
 
 export async function GET(req) {
   try {
     await connectDB();
     
-    const session = await getAuthSession();
+    const session = await auth();
     if (!session?.user?.email) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }

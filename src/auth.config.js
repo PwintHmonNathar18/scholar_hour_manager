@@ -1,7 +1,7 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import connectDB from "@/lib/db"
-import User from "@/models/User"
+import NextAuth, { getServerSession } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
 
 export const authOptions = {
   providers: [
@@ -13,10 +13,8 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          // Direct database access to avoid internal API routing issues
           await connectDB();
           const user = await User.findOne({ email: credentials.email });
-          
           // For demo: accept any password if user exists
           if (user) {
             return {
@@ -34,38 +32,24 @@ export const authOptions = {
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
   callbacks: {
+    async session({ session, token }) {
+      if (token?.role) {
+        session.user.role = token.role;
+      }
+      return session;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user.role = token?.role || "student";
-      return session;
-    },
     async redirect({ url, baseUrl }) {
-      console.log("Redirect called with url:", url, "baseUrl:", baseUrl);
-      
-      // Handle sign in redirects - always go to dashboard
-      if (url.startsWith(baseUrl + '/signin') || 
-          url === baseUrl + '/' || 
-          url === baseUrl ||
-          url.includes('/auth/signin')) {
-        const dashboardUrl = `${baseUrl}/dashboard`;
-        console.log("Redirecting to dashboard:", dashboardUrl);
-        return dashboardUrl;
+      // Always redirect to dashboard after sign in
+      if (url === baseUrl || url === `${baseUrl}/signin` || url === `${baseUrl}/`) {
+        return `${baseUrl}/dashboard`;
       }
-      
-      // For other URLs, make sure they start with baseUrl
-      if (url.startsWith('/') && !url.startsWith(baseUrl)) {
-        return baseUrl + url;
-      }
-      
       return url;
     },
   },
@@ -75,4 +59,5 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
+export const auth = () => getServerSession(authOptions);
 export default NextAuth(authOptions);

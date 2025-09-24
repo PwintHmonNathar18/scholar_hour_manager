@@ -1,7 +1,6 @@
 import connectDB from "@/lib/db";
 import Shift from "@/models/Shift";
-import { getServerSession } from "next-auth";
-import authConfig from "@/auth-v4";
+import { auth } from "@/auth.config";
 import User from "@/models/User";
 
 export async function GET(req) {
@@ -24,7 +23,7 @@ export async function GET(req) {
 export async function POST(req) {
   await connectDB();
   try {
-    const session = await getServerSession(authConfig);
+    const session = await auth();
     if (!session?.user || session.user.role !== "supervisor") {
       return Response.json({ error: "Unauthorized: Not a supervisor" }, { status: 401 });
     }

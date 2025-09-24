@@ -6,7 +6,7 @@ export default withAuth(
 
     // Protect all routes under /admin
     if (nextUrl.pathname.startsWith("/admin")) {
-      const role = req.nextauth?.token?.role;
+      const role = req.nextauth.token?.role;
       if (role !== "admin") {
         return Response.redirect(new URL("/403", nextUrl));
       }
@@ -16,7 +16,14 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token
+      authorized: ({ token, req }) => {
+        // Allow access to admin routes only for admin users
+        if (req.nextUrl.pathname.startsWith("/admin")) {
+          return token?.role === "admin";
+        }
+        // Allow all other routes
+        return true;
+      },
     },
   }
 );

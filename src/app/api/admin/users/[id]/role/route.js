@@ -1,9 +1,9 @@
-import { getAuthSession } from "@/lib/auth-helpers";
-import connectDB from "@/lib/db";
+import { auth } from "@/auth";
+import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 
 export async function PATCH(req, { params }) {
-  const session = await getAuthSession();
+  const session = await auth();
   if (!session || session.user.role !== "admin") {
     return new Response("Forbidden", { status: 403 });
   }

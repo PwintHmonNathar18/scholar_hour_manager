@@ -1,9 +1,9 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 
-function ProfileContent() {
+export default function ProfilePage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const requestedEmail = searchParams.get("email");
@@ -35,18 +35,16 @@ function ProfileContent() {
             workedHours: data.workedHours || 0,
             approvedSessions: data.approvedSessions || 0,
             contact: data.contact || "",
-            // CHANGED: ensure availableHour is a string for a controlled <input type="text">
             availableHour: data.availableHour || "",
           });
         });
     }
-    // CHANGED: re-run when requestedEmail changes
-  }, [session, requestedEmail]); // CHANGED
+  }, [session]);
 
   const handleChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const handleSave = async (e) => {
-    e.preventDefault?.(); // NEW: safe-guard whether called by onSubmit or onClick
+    e.preventDefault();
     setMessage("");
     // Only send relevant fields for each role
     let payload = {
@@ -90,13 +88,7 @@ function ProfileContent() {
         <form onSubmit={handleSave} className="w-full grid grid-cols-1 gap-5">
           <div className="flex items-center gap-3">
             <label className="w-32 text-gray-700 font-medium">Department</label>
-              <input
-                type="text"
-                value={form.department}
-                onChange={handleChange("department")}
-                disabled={!editing}
-                className="border p-2 rounded w-full text-gray-900 bg-gray-50"  // ← fixed
-              />
+            <input type="text" value={form.department} onChange={handleChange("department")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
           </div>
           {(session?.user?.role === "supervisor" || session?.user?.role === "admin" || (form.role === "supervisor" || form.role === "admin")) && (
             <>
@@ -106,13 +98,7 @@ function ProfileContent() {
               </div>
               <div className="flex items-center gap-3">
                 <label className="w-32 text-gray-700 font-medium">Available Hour</label>
-                <input
-                  type="text"
-                  value={form.availableHour}
-                  onChange={handleChange("availableHour")}
-                  disabled={!editing}
-                  className="border p-2 rounded w-full text-gray-900 bg-gray-50"
-                />
+                <input type="text" value={form.availableHour} onChange={handleChange("availableHour")} disabled={!editing} className="border p-2 rounded w-full text-gray-900 bg-gray-50" />
               </div>
             </>
           )}
@@ -141,7 +127,6 @@ function ProfileContent() {
                 </button>
               ) : (
                 <>
-                  {/* keep button type as button; handler covers both click/submit */}
                   <button type="button" className="bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-lg py-2 px-6 font-bold shadow" onClick={handleSave}>
                     Save
                   </button>
@@ -155,13 +140,5 @@ function ProfileContent() {
         </form>
       </div>
     </main>
-  );
-}
-
-export default function ProfilePage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ProfileContent />
-    </Suspense>
   );
 }

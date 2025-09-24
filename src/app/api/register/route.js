@@ -15,9 +15,9 @@ export async function POST(req) {
   const user = await User.create({
     name: body.name,
     email: body.email,
+    password: body.password, // Now storing password (should be hashed in production)
     role: body.role,
     department: body.department,
-    // password: body.password, // Not stored for demo
   });
   return Response.json({ id: user._id, email: user.email, role: user.role });
 }

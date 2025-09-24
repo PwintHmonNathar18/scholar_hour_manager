@@ -1,8 +1,7 @@
 import connectDB from "@/lib/db";
 import SessionLog from "@/models/SessionLog";
 import mongoose from "mongoose";
-import { getServerSession } from "next-auth";
-import authConfig from "@/auth-v4";
+import { auth } from "@/auth.config";
 
 export async function GET(req) {
   await connectDB();

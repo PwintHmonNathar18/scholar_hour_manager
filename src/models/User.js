@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema(
   {
     name: String,
     email: { type: String, unique: true, required: true, index: true },
+    password: String, // Added password field
     role: { type: String, enum: ["student", "supervisor", "admin"], default: "student", index: true },
   program: String,
   GPA: Number,
@@ -12,8 +13,6 @@ const UserSchema = new mongoose.Schema(
   department: String,
   workedHours: { type: Number, default: 0 },
   contact: { type: String, default: "" },
-  department: { type: String, default: "" },        // NEW
-  contact: { type: String, default: "" },           // NEW
   availableHour: { type: String, default: "" },
   },
   { timestamps: true }

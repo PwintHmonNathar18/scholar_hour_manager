@@ -61,16 +61,16 @@ export default function DashboardPage() {
             >
               <div className="flex items-center mb-4 text-2xl font-bold text-gray-900">
                 <FaRegClock />
-                <span className="ml-2">Submit Attendance</span>
+                <span className="ml-2">Log Session</span>
               </div>
               <Link
                 href="/log-session"
                 className="w-56 py-3 rounded-lg font-semibold text-white text-lg mb-4 bg-blue-600 hover:bg-blue-700 transition flex justify-center items-center"
               >
-                Submit Attendance
+                Log Your Hours
               </Link>
               <p className="text-gray-500 text-center">
-                Submit your attendance for work sessions
+                Track your work sessions and hours
               </p>
             </div>
           )}
@@ -100,16 +100,16 @@ export default function DashboardPage() {
             >
               <div className="flex items-center mb-4 text-2xl font-bold text-gray-900">
                 <FaUserCheck />
-                <span className="ml-2">Check Attendance</span>
+                <span className="ml-2">Approve Sessions</span>
               </div>
               <Link
                 href="/approve-sessions"
                 className="w-56 py-3 rounded-lg font-semibold text-white text-lg mb-4 bg-purple-600 hover:bg-purple-700 transition flex justify-center items-center"
               >
-                Check Attendance
+                Review Sessions
               </Link>
               <p className="text-gray-500 text-center">
-                Review and approve student attendance
+                Approve student work sessions
               </p>
             </div>
           )}
